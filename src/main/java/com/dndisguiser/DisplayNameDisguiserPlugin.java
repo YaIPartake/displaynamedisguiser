@@ -30,7 +30,6 @@ import javax.inject.Inject;
 import net.runelite.api.*;
 import net.runelite.api.events.*;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -62,7 +61,6 @@ public class DisplayNameDisguiserPlugin extends Plugin
 	private String fakeRsn;
 	public String[] NAMES;
 	private String[] otherPlayers;
-	private String[] obfuscatedPlayers;
 	private String obfuscationKey;
 	private static final String ALPHA_NUMERIC_STRING = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 	@Provides
@@ -75,7 +73,6 @@ public class DisplayNameDisguiserPlugin extends Plugin
 	@Override
 	public void startUp()
 	{
-// 		fakeRsn = randomAlphaNumeric(12);
 		NAMES = config.selfNameList().split(",");
 		if (config.changeSelf()) {
 			Random generator = new Random();
@@ -83,7 +80,6 @@ public class DisplayNameDisguiserPlugin extends Plugin
 			fakeRsn = NAMES[randomIndex];
 		}
 		otherPlayers = config.otherNameList().split("\n");
-		obfuscatedPlayers = config.otherNameList().split("\n");
 		obfuscationKey = config.obfuscationKey();
 		/*
 		Pastes an encrypted Name List in the dev console.
@@ -107,6 +103,7 @@ public class DisplayNameDisguiserPlugin extends Plugin
 		clientThread.invokeLater(() -> client.runScript(ScriptID.CHAT_PROMPT_INIT));
 	}
 
+
 	@Subscribe
 	public void onScriptCallbackEvent(ScriptCallbackEvent event)
 	{
@@ -122,8 +119,8 @@ public class DisplayNameDisguiserPlugin extends Plugin
 			case "friendsChatSetText":
 				String[] stringStack = client.getStringStack();
 				int stringStackSize = client.getStringStackSize();
-				final String rsn = stringStack[stringStackSize - 1];
-				final String sanitized = Text.toJagexName(Text.removeTags(rsn));
+				String rsn = stringStack[stringStackSize - 1];
+				String sanitized = Text.toJagexName(Text.removeTags(rsn));
 				if (config.changeOthers())
 				{
 					if (config.obfuscateOthers())
@@ -178,6 +175,7 @@ public class DisplayNameDisguiserPlugin extends Plugin
 	 * Recursively traverses widgets looking for text containing the players name, replacing it if necessary
 	 * @param widget The root widget to process
 	 */
+
 	private void processWidget(Widget widget)
 	{
 		if (widget == null)
@@ -219,7 +217,7 @@ public class DisplayNameDisguiserPlugin extends Plugin
 
 	private void updateChatbox()
 	{
-		Widget chatboxTypedText = client.getWidget(WidgetInfo.CHATBOX_INPUT);
+		Widget chatboxTypedText = client.getWidget(162,55);
 		if (chatboxTypedText == null || chatboxTypedText.isHidden())
 		{
 			return;
@@ -341,7 +339,6 @@ public class DisplayNameDisguiserPlugin extends Plugin
 	public String renameTarget(String oldTarget, String playerName)
 	{
 		otherPlayers = config.otherNameList().split("\n");
-		obfuscatedPlayers = config.otherNameList().split("\n");
 		if (config.changeOthers()) {
 			String newTarget;
 			for (int i = 0; i < otherPlayers.length; i++) {
