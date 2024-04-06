@@ -114,37 +114,34 @@ public class DisplayNameDisguiserPlugin extends Plugin
 		/*
 		Changes another player's username in their Friend's List.
 		 */
-		switch (event.getEventName())
-		{
-			case "friendsChatSetText":
-				String[] stringStack = client.getStringStack();
-				int stringStackSize = client.getStringStackSize();
-				String rsn = stringStack[stringStackSize - 1];
-				String sanitized = Text.toJagexName(Text.removeTags(rsn));
-				if (config.changeOthers())
+		if (event.getEventName().equalsIgnoreCase("friendsChatSetTexT")) {
+			String[] stringStack = client.getStringStack();
+			int stringStackSize = client.getStringStackSize();
+			String rsn = stringStack[stringStackSize - 1];
+			String sanitized = Text.toJagexName(Text.removeTags(rsn));
+			if (config.changeOthers())
+			{
+				if (config.obfuscateOthers())
 				{
-					if (config.obfuscateOthers())
+					for (int i = 0; i < otherPlayers.length; i++)
 					{
-						for (int i = 0; i < otherPlayers.length; i++)
+						String oldName = otherPlayers[i].split(":")[0];
+						String newName = otherPlayers[i].split(":")[1];
+						if (sanitized.equalsIgnoreCase(decrypt(oldName)))
 						{
-							String oldName = otherPlayers[i].split(":")[0];
-							String newName = otherPlayers[i].split(":")[1];
-							if (sanitized.equalsIgnoreCase(decrypt(oldName)))
-							{
-								stringStack[stringStackSize - 1] = decrypt(newName);
-							}
+							stringStack[stringStackSize - 1] = decrypt(newName);
 						}
-					} else {
-						for (int i = 0; i < otherPlayers.length; i++) {
-							String oldName = otherPlayers[i].split(":")[0];
-							String newName = otherPlayers[i].split(":")[1];
-							if (sanitized.equalsIgnoreCase(oldName)) {
-								stringStack[stringStackSize - 1] = newName;
-							}
+					}
+				} else {
+					for (int i = 0; i < otherPlayers.length; i++) {
+						String oldName = otherPlayers[i].split(":")[0];
+						String newName = otherPlayers[i].split(":")[1];
+						if (sanitized.equalsIgnoreCase(oldName)) {
+							stringStack[stringStackSize - 1] = newName;
 						}
 					}
 				}
-				break;
+			}
 		}
 	}
 
@@ -275,7 +272,7 @@ public class DisplayNameDisguiserPlugin extends Plugin
 	@Subscribe
 	private void onOverheadTextChanged(OverheadTextChanged event)
 	{
-			event.getActor().setOverheadText(replaceRsn(event.getOverheadText()));
+		event.getActor().setOverheadText(replaceRsn(event.getOverheadText()));
 	}
 
 	/*
@@ -441,7 +438,7 @@ public class DisplayNameDisguiserPlugin extends Plugin
 	public void changeTrades(ChatMessage event)
 	{
 		if (event.getMessage().toLowerCase().contains("trade")
-		|| event.getMessage().toLowerCase().contains("clan"))
+				|| event.getMessage().toLowerCase().contains("clan"))
 		{
 			if (config.changeOthers()) {
 				if (config.obfuscateOthers()) {
