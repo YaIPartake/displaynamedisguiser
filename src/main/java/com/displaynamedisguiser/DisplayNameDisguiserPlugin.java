@@ -114,7 +114,7 @@ public class DisplayNameDisguiserPlugin extends Plugin
 		/*
 		Changes another player's username in their Friend's List.
 		 */
-		if (event.getEventName().equalsIgnoreCase("friendsChatSetTexT")) {
+		if (event.getEventName().equalsIgnoreCase("friendsChatSetText")) {
 			String[] stringStack = client.getStringStack();
 			int stringStackSize = client.getStringStackSize();
 			String rsn = stringStack[stringStackSize - 1];
