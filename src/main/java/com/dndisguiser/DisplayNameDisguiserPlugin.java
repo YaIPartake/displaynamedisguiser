@@ -22,7 +22,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.plugins.displaynamedisguiser.src.main.java.com.dndisguiser;
+package com.displaynamedisguiser;
 
 import com.google.inject.Provides;
 import javax.inject.Inject;
@@ -44,7 +44,7 @@ import static net.runelite.api.MenuAction.*;
 @PluginDescriptor(
 		name = "Display Name Disguiser",
 		description = "Disguise your display name. For content creators.",
-		tags = {"username"},
+		tags = {"disguise", "fake", "display", "username", "user", "name", "rsn"},
 		enabledByDefault = false
 )
 public class DisplayNameDisguiserPlugin extends Plugin
