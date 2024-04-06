@@ -294,7 +294,7 @@ public class DisplayNameDisguiserPlugin extends Plugin
 
 			if (type == WALK
 					|| type == WIDGET_TARGET_ON_PLAYER
-					|| type == ITEM_USE_ON_PLAYER
+					//|| type == ITEM_USE_ON_PLAYER
 					|| type == PLAYER_FIRST_OPTION
 					|| type == PLAYER_SECOND_OPTION
 					|| type == PLAYER_THIRD_OPTION
