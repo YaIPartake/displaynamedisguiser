@@ -55,8 +55,7 @@ import static net.runelite.api.MenuAction.*;
 @PluginDescriptor(
 		name = "Display Name Disguiser",
 		description = "Disguise your display name. For content creators.",
-		tags = {"disguise", "fake", "display", "username", "user", "name", "rsn"},
-		enabledByDefault = false
+		tags = {"disguise", "fake", "display", "username", "user", "name", "rsn"}
 )
 public class DisplayNameDisguiserPlugin extends Plugin
 {
