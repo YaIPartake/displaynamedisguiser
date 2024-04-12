@@ -326,24 +326,6 @@ public class DisplayNameDisguiserPlugin extends Plugin
 	private void onOverheadTextChanged(OverheadTextChanged event)
 	{
 		event.getActor().setOverheadText(replaceRsn(event.getOverheadText()));
-		if (config.changeOthers()) {
-			for (String otherplayers : otherPlayers) {
-				String oldName = otherplayers.split(":")[0];
-				String newName = otherplayers.split(":")[1];
-				if(event.getOverheadText().equals(oldName)) {
-					event.getActor().setOverheadText(event.getOverheadText().replace(oldName,"<img=" + iconId + ">" + newName));
-				}
-			}
-		}
-		if (config.obfuscateOthers()) {
-			for (String otherplayers : otherPlayers) {
-				String oldName = otherplayers.split(":")[0];
-				String newName = otherplayers.split(":")[1];
-				if(event.getOverheadText().equals(decrypt(oldName))) {
-					event.getActor().setOverheadText(event.getOverheadText().replace(oldName,"<img=" + iconId + ">" + decrypt(newName)));
-				}
-			}
-		}
 	}
 
 	/*

@@ -15,7 +15,7 @@ public interface DisplayNameDisguiserConfig extends Config
 	)
 	default String selfNameList()
 	{
-		return "Partake,Brock,Salty";
+		return "Partake,Blueberry,Gorilla";
 	}
 	@ConfigItem(
 			keyName = "selfToggle",
