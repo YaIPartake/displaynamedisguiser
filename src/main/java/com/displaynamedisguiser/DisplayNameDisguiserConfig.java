@@ -8,7 +8,7 @@ import net.runelite.client.config.ConfigItem;
 public interface DisplayNameDisguiserConfig extends Config
 {
 	@ConfigItem(
-			keyName = "List of Display Names",
+			keyName = "selfNames",
 			name = "Display Names for Self",
 			description = "Set the list of possible display names to choose from. Separate each name with a comma (,)",
 			position = 0
@@ -18,7 +18,7 @@ public interface DisplayNameDisguiserConfig extends Config
 		return "Partake,Brock,Salty";
 	}
 	@ConfigItem(
-			keyName = "Change the Username for Yourself",
+			keyName = "selfToggle",
 			name = "Change Name for Self?",
 			description = "Toggle changing the display name for Yourself.",
 			position = 1
@@ -28,17 +28,17 @@ public interface DisplayNameDisguiserConfig extends Config
 		return true;
 	}
 	@ConfigItem(
-			keyName = "List of Other Name Changes",
+			keyName = "othersNames",
 			name = "Display Names for Others",
 			description = "Set the display name for another player. The format is OldName:NewName with each person per line.",
 			position = 2
 	)
 	default String otherNameList()
 	{
-		return "Old Name:New Name" + "\n" + "Ya I Partake:Partake" + "\n" + "Brock Star:Brock" + "\n" + "Kiing Salty:Salty";
+		return "Old Name:New Name" + "\n" + "Zezima:Not Zezima" + "\n" + "xXDragonSlay3rXx:Dragon Slayer" + "\n" + "TurboWet:Charlie";
 	}
 	@ConfigItem(
-			keyName = "Change the Username for Others",
+			keyName = "othersToggle",
 			name = "Change Name for Others?",
 			description = "Toggle changing the display name for Other Players.",
 			position = 3
@@ -48,9 +48,9 @@ public interface DisplayNameDisguiserConfig extends Config
 		return false;
 	}
 	@ConfigItem(
-			keyName = "Obfuscate the Display Name Change for Others",
-			name = "Secret Mode?",
-			description = "Toggle obfuscating display name changes for Others.",
+			keyName = "obfuscationToggle",
+			name = "Secret Mode? (Copies to Clipboard)",
+			description = "Toggle obfuscating display name changes for Others. Paste your clipboard in the Display Names for Others textbox.",
 			position = 4
 	)
 	default boolean obfuscateOthers()
@@ -58,8 +58,9 @@ public interface DisplayNameDisguiserConfig extends Config
 		return false;
 	}
 	@ConfigItem(
-			keyName = "Obfuscation Key",
+			keyName = "obfuscationKey",
 			name = "Secret Key",
+			secret = true,
 			description = "The secret obfuscation key, do not touch.",
 			position = 5
 	)
@@ -68,10 +69,20 @@ public interface DisplayNameDisguiserConfig extends Config
 		return "h9TIlznNraYkB2vEDd6Apj4Wx8bSJ3P7OyqKQfsZM1GCouXUiRVLH5mt0Fwceg";
 	}
 	@ConfigItem(
+			keyName = "generateKey",
+			name = "Click to Generate Key to Clipboard ->",
+			description = "Generate a new obfuscation key to clipboard. Paste into Secret Key textbox before enabling Secret Mode.",
+			position = 6
+	)
+	default boolean generateKey()
+	{
+		return false;
+	}
+	@ConfigItem(
 			name = "Hide in widgets (Lag warning)",
 			keyName = "hideWidgets",
 			description = "Hides your Display Name everywhere. Might lag your game.",
-			position = 6
+			position = 7
 	)
 	default boolean hideWidgets()
 	{
