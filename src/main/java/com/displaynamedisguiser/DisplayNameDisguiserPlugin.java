@@ -409,40 +409,17 @@ public class DisplayNameDisguiserPlugin extends Plugin
 				String oldName = otherPlayer.split(":", 2)[0];
 				String newName = otherPlayer.split(":", 2)[1];
 				String standardized = Text.removeTags(playerName);
+
 				if (standardized.equalsIgnoreCase(oldName)) {
-					if (standardized.contains(" ")) {
-						newTarget = oldTarget;
-						String[] oldTemp = standardized.split(" ");
-						for (int j = 0; j < oldTemp.length; j++) {
-							if (j < 1) {
-								newTarget = newTarget.replace(oldTemp[j], "<img=" + iconId + ">" + newName);
-							} else {
-								newTarget = newTarget.replace(oldTemp[j], "");
-								newTarget = newTarget.replace("  ", " ");
-							}
-						}
-					} else {
-						newTarget = oldTarget.replace(playerName, "<img=" + iconId + ">" + newName);
-					}
+					newTarget = oldTarget.replace("\u00a0", " ");
+					newTarget = newTarget.replace(playerName, "<img=" + iconId + ">" + newName);
 					return newTarget;
 				}
 
 				if (config.obfuscateOthers()) {
 					if (standardized.equalsIgnoreCase(decrypt(oldName))) {
-						if (standardized.contains(" ")) {
-							newTarget = oldTarget;
-							String[] oldTemp = standardized.split(" ");
-							for (int j = 0; j < oldTemp.length; j++) {
-								if (j < 1) {
-									newTarget = newTarget.replace(oldTemp[j], "<img=" + iconId + ">" + decrypt(newName));
-								} else {
-									newTarget = newTarget.replace(oldTemp[j], "");
-									newTarget = newTarget.replace("  ", " ");
-								}
-							}
-						} else {
-							newTarget = oldTarget.replace(playerName, "<img=" + iconId + ">" + decrypt(newName));
-						}
+						newTarget = oldTarget.replace("\u00a0", " ");
+						newTarget = newTarget.replace(playerName, "<img=" + iconId + ">" + decrypt(newName));
 						return newTarget;
 					}
 				}

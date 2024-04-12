@@ -49,7 +49,7 @@ public interface DisplayNameDisguiserConfig extends Config
 	}
 	@ConfigItem(
 			keyName = "obfuscationToggle",
-			name = "Secret Mode? (Copies to Clipboard)",
+			name = "Secret Mode?(Copy to Clipboard)",
 			description = "Toggle obfuscating display name changes for Others. Paste your clipboard in the Display Names for Others textbox.",
 			position = 4
 	)
@@ -70,8 +70,8 @@ public interface DisplayNameDisguiserConfig extends Config
 	}
 	@ConfigItem(
 			keyName = "generateKey",
-			name = "Click to Generate Key to Clipboard ->",
-			description = "Generate a new obfuscation key to clipboard. Paste into Secret Key textbox before enabling Secret Mode.",
+			name = "Click to Create Key (Clipboard)->",
+			description = "Generate a new obfuscation key to your clipboard. Paste into Secret Key textbox before enabling Secret Mode.",
 			position = 6
 	)
 	default boolean generateKey()
