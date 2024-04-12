@@ -76,8 +76,6 @@ public class DisplayNameDisguiserPlugin extends Plugin
 	public String[] NAMES;
 	private String[] otherPlayers;
 	private String obfuscationKey;
-	private static final int ICON_WIDTH = 13;
-	private static final int ICON_HEIGHT = 13;
 	private int iconId = -1;
 	private static final String ALPHA_NUMERIC_STRING = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 	@Provides
