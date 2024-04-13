@@ -411,15 +411,13 @@ public class DisplayNameDisguiserPlugin extends Plugin
 				String standardized = Text.removeTags(playerName);
 
 				if (standardized.equalsIgnoreCase(oldName)) {
-					newTarget = oldTarget.replace("\u00a0", " ");
-					newTarget = newTarget.replace(playerName, "<img=" + iconId + ">" + newName);
+					newTarget = Text.sanitize(oldTarget).replace(playerName, "<img=" + iconId + ">" + newName);
 					return newTarget;
 				}
 
 				if (config.obfuscateOthers()) {
 					if (standardized.equalsIgnoreCase(decrypt(oldName))) {
-						newTarget = oldTarget.replace("\u00a0", " ");
-						newTarget = newTarget.replace(playerName, "<img=" + iconId + ">" + decrypt(newName));
+						newTarget = Text.sanitize(oldTarget).replace(playerName, "<img=" + iconId + ">" + decrypt(newName));
 						return newTarget;
 					}
 				}
