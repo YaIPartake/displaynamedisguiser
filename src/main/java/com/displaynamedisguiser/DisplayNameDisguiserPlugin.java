@@ -32,6 +32,7 @@ import net.runelite.api.events.*;
 import net.runelite.api.widgets.Widget;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
+import net.runelite.client.config.RuneLiteConfig;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
@@ -41,10 +42,7 @@ import net.runelite.client.util.Text;
 import net.runelite.client.game.ChatIconManager;
 
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import java.awt.datatransfer.StringSelection;
 import java.awt.Toolkit;
@@ -92,6 +90,9 @@ public class DisplayNameDisguiserPlugin extends Plugin
 			Random generator = new Random();
 			int randomIndex = generator.nextInt(NAMES.length);
 			fakeRsn = NAMES[randomIndex];
+			if (fakeRsn == null || fakeRsn == "" || fakeRsn == " " || fakeRsn.contains(",") || fakeRsn.contains(":") || fakeRsn.length() < 1) {
+				fakeRsn = "Nice Try";
+			}
 		}
 		otherPlayers = config.otherNameList().split("\n");
 		obfuscationKey = config.obfuscationKey();
@@ -163,6 +164,16 @@ public class DisplayNameDisguiserPlugin extends Plugin
 		if(event.getKey().equals("othersNames"))
 		{
 			otherPlayers = event.getNewValue().split("\n");
+			List<String> newList = new ArrayList<String>();
+			for (String otherPlayer : otherPlayers) {
+				String oldName = otherPlayer.split(":")[0];
+				String newName = otherPlayer.split(":")[1];
+				if (oldName != null && newName != null && oldName != "" && newName != "" && oldName != " " && newName != " " &&
+						oldName.contains(",") == false && oldName.contains(":") == false && newName.contains(",") == false && newName.contains (":") == false) {
+					newList.add(oldName + ":" + newName);
+				}
+			}
+			otherPlayers = newList.toArray(new String[newList.size()]);
 		}
 		/*
 		Resets the user's name legend anytime its value is changed.
@@ -170,6 +181,13 @@ public class DisplayNameDisguiserPlugin extends Plugin
 		if(event.getKey().equals("selfNames"))
 		{
 			NAMES = event.getNewValue().split(",");
+			List<String> newList = new ArrayList<String>();
+			for (String name : NAMES) {
+				if (name != null && name != "" && name != " " && name.contains(",") == false && name.contains(":") == false) {
+					newList.add(name);
+				}
+			}
+			NAMES = newList.toArray(new String[newList.size()]);
 		}
 	}
 	@Subscribe
@@ -193,7 +211,7 @@ public class DisplayNameDisguiserPlugin extends Plugin
 				{
 					String oldName = otherPlayer.split(":")[0];
 					String newName = otherPlayer.split(":")[1];
-					if (sanitized.equalsIgnoreCase(oldName)) {
+					if (sanitized.equalsIgnoreCase(Text.toJagexName(oldName))) {
 						stringStack[stringStackSize - 1] = "<img=" + iconId + ">" + newName;
 					}
 				}
@@ -203,8 +221,8 @@ public class DisplayNameDisguiserPlugin extends Plugin
 					{
 						String oldName = otherPlayer.split(":")[0];
 						String newName = otherPlayer.split(":")[1];
-						if (sanitized.equalsIgnoreCase(decrypt(oldName))) {
-							stringStack[stringStackSize - 1] = decrypt(newName);
+						if (sanitized.equalsIgnoreCase(Text.toJagexName(decrypt(oldName)))) {
+							stringStack[stringStackSize - 1] = "<img=" + iconId + ">" + decrypt(newName);
 						}
 					}
 				}
@@ -295,7 +313,7 @@ public class DisplayNameDisguiserPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
+	@Subscribe(priority=1)
 	private void onChatMessage(ChatMessage event)
 	{
 		//noinspection ConstantConditions
@@ -436,7 +454,7 @@ public class DisplayNameDisguiserPlugin extends Plugin
 		String standardized = Text.standardize(playerRsn);
 		while (Text.standardize(textIn).contains(standardized))
 		{
-			int idx = textIn.replace("\u00A0", " ").toLowerCase().indexOf(playerRsn.toLowerCase());
+			int idx = Text.toJagexName(textIn).toLowerCase().indexOf(playerRsn.toLowerCase());
 			int length = playerRsn.length();
 			String partOne = textIn.substring(0, idx);
 			String partTwo = textIn.substring(idx + length);
