@@ -85,16 +85,20 @@ public class DisplayNameDisguiserPlugin extends Plugin
 	@Override
 	public void startUp() throws Exception
 	{
-		NAMES = config.selfNameList().split(",");
+		if (config.selfNameList() != null) {
+			NAMES = config.selfNameList().split(",");
+		}
 		if (config.changeSelf()) {
 			Random generator = new Random();
 			int randomIndex = generator.nextInt(NAMES.length);
 			fakeRsn = NAMES[randomIndex];
-			if (fakeRsn == null || fakeRsn == "" || fakeRsn == " " || fakeRsn.contains(",") || fakeRsn.contains(":") || fakeRsn.length() < 1) {
+			if (fakeRsn.length() < 2) {
 				fakeRsn = "Nice Try";
 			}
 		}
-		otherPlayers = config.otherNameList().split("\n");
+		if(config.otherNameList() != null) {
+			otherPlayers = config.otherNameList().split("\n");
+		}
 		obfuscationKey = config.obfuscationKey();
 		//Load Icon
 		clientThread.invoke(() ->
@@ -163,27 +167,32 @@ public class DisplayNameDisguiserPlugin extends Plugin
 		 */
 		if(event.getKey().equals("othersNames"))
 		{
-			otherPlayers = event.getNewValue().split("\n");
-			List<String> newList = new ArrayList<String>();
-			for (String otherPlayer : otherPlayers) {
-				String oldName = otherPlayer.split(":")[0];
-				String newName = otherPlayer.split(":")[1];
-				if (oldName != null && newName != null && oldName != "" && newName != "" && oldName != " " && newName != " " &&
-						oldName.contains(",") == false && oldName.contains(":") == false && newName.contains(",") == false && newName.contains (":") == false) {
-					newList.add(oldName + ":" + newName);
+			if(event.getNewValue() != null) {
+				otherPlayers = event.getNewValue().split("\n");
+				List<String> newList = new ArrayList<String>();
+				for (String otherPlayer : otherPlayers) {
+					if (otherPlayer != null && otherPlayer.contains(":")) {
+						String oldName = otherPlayer.split(":")[0];
+						String newName = otherPlayer.split(":")[1];
+						if (oldName.length() > 2 && newName.length() > 1) {
+							newList.add(oldName + ":" + newName);
+						}
+					}
 				}
+				otherPlayers = newList.toArray(new String[newList.size()]);
 			}
-			otherPlayers = newList.toArray(new String[newList.size()]);
 		}
 		/*
 		Resets the user's name legend anytime its value is changed.
 		 */
 		if(event.getKey().equals("selfNames"))
 		{
-			NAMES = event.getNewValue().split(",");
+			if(event.getNewValue() != null) {
+				NAMES = event.getNewValue().split(",");
+			}
 			List<String> newList = new ArrayList<String>();
 			for (String name : NAMES) {
-				if (name != null && name != "" && name != " " && name.contains(",") == false && name.contains(":") == false) {
+				if (name.length() > 1) {
 					newList.add(name);
 				}
 			}
@@ -272,7 +281,7 @@ public class DisplayNameDisguiserPlugin extends Plugin
 
 		for (String otherPlayer : otherPlayers)
 		{
-			if (config.changeSelf() && widget.getName().contains(Text.standardize(otherPlayer))) {
+			if (config.changeSelf() && widget.getName().contains(Text.standardize(otherPlayer)) && otherPlayer.contains(":")) {
 				String oldName = Text.standardize(otherPlayer.split(":")[0]);
 				String newName = Text.standardize(otherPlayer.split(":")[1]);
 
@@ -424,19 +433,22 @@ public class DisplayNameDisguiserPlugin extends Plugin
 			String newTarget;
 			for (String otherPlayer : otherPlayers)
 			{
-				String oldName = otherPlayer.split(":", 2)[0];
-				String newName = otherPlayer.split(":", 2)[1];
-				String standardized = Text.removeTags(playerName);
+				if (otherPlayer.contains(":") && otherPlayer.length() > 5)
+				{
+					String oldName = otherPlayer.split(":", 2)[0];
+					String newName = otherPlayer.split(":", 2)[1];
+					String standardized = Text.removeTags(playerName);
 
-				if (standardized.equalsIgnoreCase(oldName)) {
-					newTarget = Text.sanitize(oldTarget).replace(playerName, "<img=" + iconId + ">" + newName);
-					return newTarget;
-				}
-
-				if (config.obfuscateOthers()) {
-					if (standardized.equalsIgnoreCase(decrypt(oldName))) {
-						newTarget = Text.sanitize(oldTarget).replace(playerName, "<img=" + iconId + ">" + decrypt(newName));
+					if (standardized.equalsIgnoreCase(oldName)) {
+						newTarget = Text.toJagexName(oldTarget).replace(Text.toJagexName(playerName), "<img=" + iconId + ">" + newName);
 						return newTarget;
+					}
+
+					if (config.obfuscateOthers()) {
+						if (standardized.equalsIgnoreCase(decrypt(oldName))) {
+							newTarget = Text.toJagexName(oldTarget).replace(Text.toJagexName(playerName), "<img=" + iconId + ">" + decrypt(newName));
+							return newTarget;
+						}
 					}
 				}
 			}
@@ -470,17 +482,19 @@ public class DisplayNameDisguiserPlugin extends Plugin
 		otherPlayers = config.otherNameList().split("\n");
 		for (String otherPlayer : otherPlayers)
 		{
-			String oldName = otherPlayer.split(":", 2)[0];
-			String newName = otherPlayer.split(":", 2)[1];
-			if (Text.standardize(event.getName()).equalsIgnoreCase(oldName)) {
-				event.setName("<img=" + iconId + ">" + newName);
-				event.getMessageNode().setName("<img=" + iconId + ">" + newName);
-			}
+			if (otherPlayer.contains(":") && otherPlayer.length() > 5) {
+				String oldName = otherPlayer.split(":", 2)[0];
+				String newName = otherPlayer.split(":", 2)[1];
+				if (Text.standardize(event.getName()).equalsIgnoreCase(oldName)) {
+					event.setName("<img=" + iconId + ">" + newName);
+					event.getMessageNode().setName("<img=" + iconId + ">" + newName);
+				}
 
-			if (config.obfuscateOthers()) {
-				if (Text.standardize(event.getName()).equalsIgnoreCase(decrypt(oldName))) {
-					event.setName("<img=" + iconId + ">" + decrypt(newName));
-					event.getMessageNode().setName("<img=" + iconId + ">" + decrypt(newName));
+				if (config.obfuscateOthers()) {
+					if (Text.standardize(event.getName()).equalsIgnoreCase(decrypt(oldName))) {
+						event.setName("<img=" + iconId + ">" + decrypt(newName));
+						event.getMessageNode().setName("<img=" + iconId + ">" + decrypt(newName));
+					}
 				}
 			}
 		}
@@ -495,27 +509,28 @@ public class DisplayNameDisguiserPlugin extends Plugin
 				|| event.getMessage().toLowerCase().contains("clan"))
 		{
 			if (config.changeOthers()) {
-				otherPlayers = config.otherNameList().split("\n");
-				for (int i = 0; i < otherPlayers.length; i++)
-				{
-					String oldName = otherPlayers[i].split(":", 2)[0];
-					String newName = otherPlayers[i].split(":", 2)[1];
-					if (Text.standardize(event.getMessageNode().getValue().toLowerCase()).contains(oldName.toLowerCase()))
-					{
-						event.setMessage(event.getMessage().replace(oldName,"<img=" + iconId + ">" + newName));
-						event.getMessageNode().setValue(event.getMessageNode().getValue().replace(oldName,"<img=" + iconId + ">" + newName));
+				if (config.otherNameList() != null)
+					otherPlayers = config.otherNameList().split("\n");
+				for (String player : otherPlayers) {
+					if (player.contains(":") && player.length() > 5) {
+						String oldName = player.split(":", 2)[0];
+						String newName = player.split(":", 2)[1];
+						if (Text.standardize(event.getMessageNode().getValue().toLowerCase()).contains(oldName.toLowerCase())) {
+							event.setMessage(event.getMessage().replace(oldName, "<img=" + iconId + ">" + newName));
+							event.getMessageNode().setValue(event.getMessageNode().getValue().replace(oldName, "<img=" + iconId + ">" + newName));
+						}
 					}
 				}
 				if (config.obfuscateOthers()) {
 					otherPlayers = config.otherNameList().split("\n");
-					for (int i = 0; i < otherPlayers.length; i++)
-					{
-						String oldName = otherPlayers[i].split(":", 2)[0];
-						String newName = otherPlayers[i].split(":", 2)[1];
-						if (Text.standardize(event.getMessageNode().getValue().toLowerCase()).contains(decrypt(oldName).toLowerCase()))
-						{
-							event.setMessage(event.getMessage().replace(decrypt(oldName),"<img=" + iconId + ">" + decrypt(newName)));
-							event.getMessageNode().setValue(event.getMessageNode().getValue().replace(decrypt(oldName),"<img=" + iconId + ">" + decrypt(newName)));
+					for (String otherPlayer : otherPlayers) {
+						if (otherPlayer.contains(":") && otherPlayer.length() > 5) {
+							String oldName = otherPlayer.split(":", 2)[0];
+							String newName = otherPlayer.split(":", 2)[1];
+							if (Text.standardize(event.getMessageNode().getValue().toLowerCase()).contains(decrypt(oldName).toLowerCase())) {
+								event.setMessage(event.getMessage().replace(decrypt(oldName), "<img=" + iconId + ">" + decrypt(newName)));
+								event.getMessageNode().setValue(event.getMessageNode().getValue().replace(decrypt(oldName), "<img=" + iconId + ">" + decrypt(newName)));
+							}
 						}
 					}
 				}
